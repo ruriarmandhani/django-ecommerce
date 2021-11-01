@@ -1,0 +1,238 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block head-extras %}
+<style>
+    .contact-info input {
+        font-weight: bold;
+    }
+
+    .img-item {
+        max-width: 80px;
+    }
+
+    .category {
+        font-size: 0.8rem;
+        color: rgba(0, 0, 0, 0.5)
+    }
+
+    .autocomplete-items div {
+        padding: 10px;
+        cursor: pointer;
+        background-color: #fff;
+        border-bottom: 1px solid #d4d4d4;
+        border-right: 1px solid #d4d4d4;
+        border-left: 1px solid #d4d4d4;
+        color: rgba(0, 0, 0, 0.75);
+    }
+
+    /*when hovering an item:*/
+    .autocomplete-items div:hover {
+        background-color: #e9e9e9;
+    }
+
+    /*when navigating through the items using the arrow keys:*/
+    .autocomplete-active {
+        background-color: DodgerBlue !important;
+        color: #ffffff;
+    }
+
+    #saf-error {
+        display: none;
+        color: #721c24;
+        background-color: #f8d7da;
+    }
+
+    @media only screen and (max-width: 991px) {
+        .col-lg-5 {
+            margin-top: 1rem;
+        }
+    }
+</style>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+{% endblock %}
+{% block content %}
+<div class="container">
+    <div class="row mt-3 mb-5">
+        <div class="col-lg-7">
+            <form method="POST" id="checkout" name="checkout" autocomplete="off">
+                {% csrf_token %}
+                <ul class="list-group">
+                    <li class="list-group-item p-5">
+                        <h5><strong>Contact Information</strong></h5>
+                        <hr>
+                        <div class="row mb-2">
+                            <div class="col">
+                                <label class="form-label" for="recipient">Recipient:</label>
+                                <input class="form-control mb-2" type="text" name="recipient"
+                                    value="{{request.user.first_name}} {{request.user.last_name}}">
+                                <label class="form-label" for="phone">Phone:</label>
+                                <input id="phone" class="form-control" type="text" name="phone"
+                                    value="{{request.user.phone}}">
+                            </div>
+                            <div class="col">
+                                <label class="form-label" for="email">Email:</label>
+                                <input class="form-control" type="email" name="email" value="{{request.user.email}}"
+                                    readonly>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="list-group-item p-5">
+                        <h5><strong>Shipping Address</strong></h5>
+                        <hr>
+                        <div class="alert alert-dismissible alert-danger" id="saf-error">
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            Shipping address form is not complete. Please fill out all of the fields.
+                        </div>
+                        <div class="row mb-2">
+                            <div class="col">
+                                <label class="form-label" for="{{form.address.auto_id}}">{{form.address.label}}:</label>
+                                {{form.address}}
+                                <label class="form-label mt-2" for="{{form.city.auto_id}}">{{form.city.label}}:</label>
+                                {{form.city}}
+
+                            </div>
+                        </div>
+
+                        <div class="row mb-2">
+                            <div class="col">
+                                <label class="form-label" for="{{form.state.auto_id}}">{{form.state.label}}:</label>
+                                {{form.state}}
+                            </div>
+                            <div class="col">
+                                <label class="form-label"
+                                    for="{{form.zip_code.auto_id}}">{{form.zip_code.label}}:</label>
+                                {{form.zip_code}}
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <label class="form-label" for="{{form.country.auto_id}}">{{form.country.label}}:</label>
+                                {{form.country}}
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </form>
+        </div>
+        <div class="col-lg-5">
+            <ul class="list-group">
+                <li class="list-group-item p-5">
+                    <h5><strong>Order Summary</strong></h5>
+                    <hr>
+                    <table class="table">
+                        {% for order_item in order_items %}
+                        <tr>
+                            <td>
+                                <img class="img-item" src="{{order_item.item.product.image.url}}" alt="">
+                            </td>
+                            <td>
+                                <p class="m-0 "><strong>{{order_item.item.product}}</strong></p>
+                                <p class="mb-2 category">{{order_item.item.product.category}}</p>
+                                <p>Size: {{order_item.item.size}}</p>
+                            </td>
+                            <td class="text-center">
+                                <p><strong>${{order_item.item.price}} x {{order_item.quantity}}</strong></p>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                        <tr>
+                            <td><strong>Total Price:</strong></td>
+                            <td></td>
+                            <td class="text-center"><strong>${{price_to_pay}}</strong></td>
+                        </tr>
+                    </table>
+                    <div id="paypal-button-container"></div>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block js-extras %}
+<script>
+    //setup before functions
+    let typingTimer;                //timer identifier
+    const doneTypingInterval = 400;  //time in ms, 5 second for example
+    const $input = $('#id_city');
+
+    //on keyup, start the countdown
+    $input.on('keyup', function () {
+        clearTimeout(typingTimer);
+        typingTimer = setTimeout(doneTyping, doneTypingInterval);
+    });
+
+    //on keydown, clear the countdown 
+    $input.on('keydown', function () {
+        clearTimeout(typingTimer);
+    });
+
+    //user is "finished typing," do something
+    function doneTyping() {
+        //do something
+        query = document.getElementById('id_city').value
+        fetch("{% url 'cities' '0' %}".replace(/0/, query), {
+            method: 'GET',
+            headers: {
+                'Content-type': 'application/json',
+                'X-CSRFToken': "{{csrf_token}}"
+            }
+        })
+            .then(response => response.json())
+            .then(json => {
+                const cities = []
+                json.data.forEach(e => {
+                    city = `${e.city}, ${e.region}, ${e.country}, ${e.countryCode}`
+                    if (cities.includes(city) === false) {
+                        cities.push(city)
+                    }
+                });
+                return cities
+            })
+            .then(cities => {
+                autocomplete(document.getElementById('id_city'), cities)
+            })
+    }
+</script>
+<script src="{% static 'shop/js/autocomplete.js' %}"></script>
+<script
+    src="https://www.paypal.com/sdk/js?client-id=AT5psMY2sUIhN_2haH9E5CyT1QZmVXkTWXjYvSWr9PuNfGGabz6578_t7aE45ZNn2rFSVlMTN3I11UYI&disable-funding=card">
+    </script>
+<script>
+    paypal.Buttons({
+        style: {
+            color: 'blue',
+            shape: 'pill',
+            label: 'checkout',
+        },
+
+        createOrder: function (data, actions) {
+            return actions.order.create({
+                application_context: {
+                    shipping_preference: 'NO_SHIPPING'
+                },
+                purchase_units: [{
+                    amount: {
+                        value: '{{price_to_pay}}',
+                    }
+                }]
+            });
+        },
+
+        onClick: function (data, actions) {
+            if (document.checkout.checkValidity() == false) {
+                document.getElementById('saf-error').style.display = 'block'
+                return actions.reject()
+            }
+        },
+
+        onApprove: function (data, actions) {
+            return actions.order.capture().then(function (orderData) {
+                let checkoutURL = "{% url 'create_order' '0' %}"
+                const transaction_id = orderData.purchase_units[0].payments.captures[0].id;
+                document.getElementById('checkout').action = checkoutURL.replace(/0/, transaction_id)
+                document.getElementById('checkout').submit()
+            });
+        }
+    }).render('#paypal-button-container');
+</script>
+{% endblock%}

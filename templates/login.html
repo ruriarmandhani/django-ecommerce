@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block head-extras %}
+<link rel="stylesheet" href="{% static 'shop/css/login.css' %}">
+{% endblock %}
+{% block content %}
+<div class="container mt-5">
+  <div class="content-area d-flex justify-content-between mb-5">
+    <div class="col-sm-4 ms-auto me-5 login">
+      <h5 class="mb-4">LOGIN</h5>
+      {% for message in messages %}
+      {% if 'login' in message.tags %}
+      <div class="alert alert-danger" role="alert">
+        {{message}}
+      </div>
+      {% endif %}
+      {% endfor %}
+      <form action="" method="post">
+        {% csrf_token %}
+        <label for="{{login_form.email_login.auto_id}}" class="mb-2">Email:</label>
+        {{login_form.email_login}}
+        <label for="{{login_form.password.auto_id}}" class="mb-2">Password:</label>
+        {{login_form.password}}
+        <div class="d-flex justify-content-between">
+          <button type="submit" class="btn btn-primary ps-4 pe-4" name="login">Login</button>
+          <a href="{% url 'reset_password' %}">Forgot password?</a>
+        </div>
+      </form>
+    </div>
+    <hr>
+    <div class="col-sm-5 ms-5 me-auto account">
+      <h5 class="mb-4">CREATE ACCOUNT</h5>
+      {% for message in messages %}
+      {% if 'signup' in message.tags %}
+      <div class="alert alert-success" role="alert">
+        {{message}}
+      </div>
+      {% endif %}
+      {% endfor %}
+      <form action="" method="post">
+        {% csrf_token %}
+        <div class="row">
+          <div class="col">
+            <label for="{{reg_form.first_name.auto_id}}" class="mb-2">First Name:</label>
+            {{reg_form.first_name}}
+          </div>
+          <div class="col">
+            <label for="{{reg_form.last_name.auto_id}}" class="mb-2">Last Name:</label>
+            {{reg_form.last_name}}
+          </div>
+        </div>
+
+        <label for="{{reg_form.email.auto_id}}" class="mb-2">Email:</label>
+        {{reg_form.email}}
+        <label for="{{reg_form.phone.auto_id}}" class="mb-2">Phone:</label>
+        {{reg_form.phone}}
+        <label for="{{reg_form.password1.auto_id}}" class="mb-2">Password:</label>
+        {{reg_form.password1}}
+        <p style="font-size: 11px; margin-top: 4px; color:#666 ">Password must contain at
+          least 8
+          characters.</p>
+        <label for="{{reg_form.password2.auto_id}}" class="mb-2">Confirm Password:</label>
+        {{reg_form.password2}}
+        <button type="submit" class="btn btn-primary mt-2" name="signup">Create Account</button>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,86 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block head-extras %}
+<style>
+    img {
+        max-width: 100px;
+    }
+
+    .status {
+        color: lightseagreen
+    }
+
+    .category,
+    .order-date {
+        font-size: 0.9rem;
+        color: rgba(0, 0, 0, 0.5)
+    }
+
+    table {
+        width: 100%;
+    }
+</style>
+{% endblock %}
+{% block content %}
+<div class="container">
+    <div class="row" style="min-height: 400px;">
+        <ul class="list-group mt-3 mb-3">
+            <li class="list-group-item">
+                <h5>Order Details</h5>
+            </li>
+            <li class="list-group-item pt-0 pb-0 pe-0">
+                <div class="row">
+                    <div class="col-lg-3 pt-3 border-end">
+                        <h5 class="mb-0"><strong>#{{order_details.order.transaction_id}}</strong></h5>
+                        <p class="order-date">{{order_details.order.ordered_date}}</p>
+
+                        <p class="mb-1"><strong>Status:</strong></p>
+                        <h5 class="status mb-3"><strong>{{order_details.order.status}}</strong></h5>
+
+                    </div>
+                    <div class="col-lg-3 border-end">
+                        <p class="mt-2 mb-1"><strong>Contact Info:</strong></p>
+                        <p class=" mb-1">Name: {{order_details.recipient}}</p>
+                        <p class=" mb-1">Email: {{order_details.recipient_email}}</p>
+                        <p>Phone: {{order_details.recipient_phone}}</p>
+                        <p class="mb-1"><strong>Shipping Address:</strong></p>
+                        <p class=" mb-0">{{order_details.address}},</p>
+                        <p class="mb-0">{{order_details.city}},</p>
+                        <p class="mb-0">{{order_details.state}},</p>
+                        <p class="mb-3">{{order_details.country.name}}, {{order_details.zipcode}}</p>
+                    </div>
+                    <div class="col-lg-6 ps-0">
+                        {% for ordered_item in order_details.order.order_item.all %}
+                        <div class="row pt-3 pb-3 ms-auto me-auto border-bottom ">
+                            <div class=" col-lg-3 text-center">
+                                <img src="{{ordered_item.item.product.image.url}}" alt="">
+                            </div>
+                            <div class="col-lg-6">
+                                <p class="m-0"><strong>{{ordered_item.item.product}}</strong></p>
+                                <p class="mb-2 category">{{ordered_item.item.product.category}}</p>
+                                <p>Size: {{ordered_item.item.size}}</p>
+                            </div>
+                            <div class="col-lg-3">
+                                <p>
+                                    <strong>${{ordered_item.item.price}} x {{ordered_item.quantity}}</strong>
+                                </p>
+                            </div>
+                        </div>
+                        {% endfor %}
+                        <div class="row pt-3 pb-3 ms-auto me-auto">
+                            <div class="col-lg-9">
+                                <p class="text-end"><strong>Total Price:</strong></p>
+                            </div>
+                            <div class="col-lg-3">
+                                <p><strong>${{price_to_pay}}</strong></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </li>
+        </ul>
+    </div>
+</div>
+{% endblock %}
+{% block js-extras %}
+{% endblock%}

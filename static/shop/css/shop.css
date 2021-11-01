@@ -1,0 +1,45 @@
+.category li a:link {
+  text-decoration: none;
+  font-size: 0.9rem;
+}
+
+.filter li {
+  font-size: 0.9rem;
+}
+
+.accordion {
+  margin-top: -1px;
+}
+
+.accordion-item {
+  border-radius: 0 !important;
+}
+
+.accordion-button {
+  padding: 0.5rem 1rem;
+  font-size: 0.9rem;
+}
+
+.accordion-body label {
+  font-size: 0.9rem;
+}
+
+.checkbox-container {
+  padding: 2px;
+}
+
+#min-price,
+#max-price {
+  height: 26px;
+  width: 100%;
+}
+
+@media only screen and (max-width: 767px) {
+  .item-list {
+    margin-top: 3%;
+  }
+
+  .breadcrumb {
+    margin-bottom: 3% !important;
+  }
+}

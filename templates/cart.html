@@ -1,0 +1,107 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block head-extras %}
+<link rel="stylesheet" href="{% static 'shop/css/cart.css'%}">
+{% endblock %}
+{% block content %}
+<div class="container">
+    <div class="col mt-3 mb-3">
+        <ul class="list-group">
+            <li class="list-group-item">
+                <div class="d-flex flex-row justify-content-between p-2">
+                    <a href="{% url 'shop' %}" class="my-auto">
+                        <span class="material-icons align-top">arrow_back</span>
+                        <span class="align-top">Continue Shopping</span>
+                    </a>
+                    {% if total_item_in_cart > 0 %}
+                    <a href="{% url 'checkout' %}">
+                        <button class="btn btn-outline-primary">Checkout</button>
+                    </a>
+                    {% endif %}
+                </div>
+            </li>
+            <li class="list-group-item p-5" style="min-height: 500px;">
+                {% if total_item_in_cart > 0 %}
+                <table class="table">
+                    <tr>
+                        <th>Product</th>
+                        <th class="text-center">Size</th>
+                        <th class="text-center">Unit Price</th>
+                        <th class="text-center">Quantity</th>
+                        <th class="text-center">Total Price</th>
+                        <th></th>
+                    </tr>
+
+                    {% for order_item in order_items %}
+                    <tr>
+                        <td>
+                            <a href="{% url 'product' order_item.item.product.slug order_item.item.id %}">
+                                <img class="me-3 border" src="{{order_item.item.product.image.url}}" alt="">
+                                {{order_item.item.product}}
+                            </a>
+                        </td>
+                        <td class="text-center align-middle">
+                            {{order_item.item.size}}
+                        </td>
+                        <td class="text-center align-middle">
+                            ${{order_item.item.price}}
+                        </td>
+                        <td class="text-center align-middle">
+                            <button data-id="{{order_item.id}}" data-flag="rm" class="btn btn-sm p-0" id="rm"
+                                onclick="removeQuantity(this)">
+                                <span class="material-icons align-middle span-rm">remove</span>
+                            </button>
+
+                            <span class="p-2 align-middle" id="qty-{{order_item.id}}"
+                                data-quantity="{{order_item.quantity}}" data-stock="{{order_item.item.stock}}">
+                                {{order_item.quantity}}
+                            </span>
+
+                            <button data-id="{{order_item.id}}" data-flag="add" class="btn btn-sm p-0" id="add"
+                                onclick="addQuantity(this)">
+                                <span class="material-icons align-middle">add</span>
+                            </button>
+                        </td>
+                        <td class="text-center align-middle">
+                            ${{order_item.get_total_price}}
+                        </td>
+
+                        <td class="align-middle">
+                            <a class="rm-item" href="{% url 'change_quantity' order_item.id 'rm-item' %}"
+                                title="Remove item"><i class="fas fa-times"></i></a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+
+                    <tr class="price-to-pay">
+                        <td class="ps-4"><strong>Total</strong></td>
+                        <td></td>
+                        <td></td>
+                        <td class="text-center"><strong>{{count_items}}</strong></td>
+                        <td class="text-center"><strong>${{price_to_pay}}</strong></td>
+                        <td></td>
+                    </tr>
+                </table>
+                <div class="d-flex justify-content-center">
+                    <a href="#" title="Back to top">
+                        <span class="material-icons align-top">arrow_upward</span>
+                        <span class="align-top">Back to top</span></a>
+                </div>
+                {% else %}
+                <p class="text-center"><span class="material-icons" style="font-size: 10rem;">
+                        remove_shopping_cart
+                    </span></p>
+                <h2 class="text-center">Your cart is empty.</h2>
+                <p class="text-center">Once you add an item to your cart, it will appear here.</p>
+                {% endif %}
+            </li>
+        </ul>
+    </div>
+</div>
+{% endblock %}
+{% block js-extras %}
+<script>
+    let defaultChangeQtyURL = "{% url 'change_quantity' 0 'flag' %}";
+</script>
+<script src="{% static 'shop/js/cart.js' %}"></script>
+{% endblock%}

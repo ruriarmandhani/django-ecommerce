@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block head-extras %}
+<style>
+    li.list-group-item a:link {
+        text-decoration: none;
+    }
+
+    input {
+        font-weight: bold;
+    }
+
+    .btn-save,
+    .btn-cancel {
+        font-size: 0.9rem;
+        border-color: #ced4da;
+        width: 70px;
+    }
+</style>
+{% endblock %}
+{% block content %}
+<div class="container">
+    <div class="row mt-3 mb-3">
+        <div class="col-lg-8 mb-3 ms-auto me-auto">
+            <ul class="list-group">
+                <li class="list-group-item">
+                    <h5>My Account</h5>
+                </li>
+                <li class="list-group-item">
+                    <form action="" method="POST">
+                        {% csrf_token %}
+                        <div class="row mt-3 pb-5">
+                            <div class="col-lg-8 ms-auto me-auto">
+                                <label for="first-name" class="mb-2">First Name:</label>
+                                <input type="text" class="form-control mb-2" name="first-name" id="first-name"
+                                    value="{{user.first_name}}" required>
+                                <label for="last-name" class="mb-2">Last Name:</label>
+                                <input type="text" class="form-control mb-2" name="last-name" id="last-name"
+                                    value="{{user.last_name}}" required>
+                                <label for="email" class="mb-2">Email:</label>
+                                <input type="text" class="form-control mb-2" name="email" id="email"
+                                    value="{{user.email}}" required>
+                                <label for="phone" class="mb-2">Phone:</label>
+                                <input type="text" class="form-control mb-3" name="phone" id="phone"
+                                    value="{{user.phone}}" required>
+                                <div class="text-center">
+                                    <button type="submit" class="btn btn-outline-primary btn-save"
+                                        id="save">Save</button>
+                                    <input type="button" class="btn btn-outline-primary btn-cancel" value="Cancel"
+                                        onclick="cancelForm()">
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block js-extras %}
+<script>
+    function cancelForm() {
+        location.href = "{% url 'account' %}"
+    }
+</script>
+{% endblock %}

@@ -1,0 +1,52 @@
+img.img-item {
+  max-width: 400px;
+}
+
+.size {
+  width: 100%;
+}
+
+.stock {
+  margin-top: 2px;
+}
+
+.stock p {
+  color: rgba(1, 163, 164, 0.75);
+}
+
+.qty {
+  padding-top: 0.25rem;
+  padding-bottom: 0.25rem;
+  padding-left: 0.5rem;
+  font-size: 0.875rem;
+}
+
+.item-variant li {
+  list-style: none;
+  display: inline;
+  padding: 2px;
+  height: auto;
+  width: auto;
+}
+
+.item-variant a {
+  border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.item-variant a:hover {
+  border-color: #2c3e50;
+}
+
+.item-variant .active {
+  border-color: rgba(1, 163, 164, 0.75);
+}
+
+.item-variant img {
+  padding: 2px;
+  max-height: auto;
+  max-width: 80px;
+}
+
+.desc {
+  color: rgba(0, 0, 0, 0.5);
+}

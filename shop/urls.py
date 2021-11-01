@@ -1,0 +1,35 @@
+from django.urls import path
+from django.contrib.auth import views as auth_views
+from . import views
+
+urlpatterns = [
+    path('', views.index, name='index'),
+    path('login-page/', views.login_page, name='login_page'),
+    path('logout/', views.user_logout, name='logout'),
+    path('shop/', views.shop, name='shop'),
+    path('shop/<str:category_slug>/', views.shop, name='shop'),
+    path('product/<slug:slug>-<int:id>/', views.product, name='product'),
+    path('cart/', views.cart, name="cart"),
+    path('add/<int:item_id>/<int:quantity>',
+         views.add_item_to_cart, name="add_cart"),
+    path('change-quantity/<int:orderitem_id>/<str:flag>',
+         views.change_quantity, name="change_quantity"),
+    path('checkout/', views.checkout, name="checkout"),
+    path('create-order/<str:transaction_id>',
+         views.create_order, name="create_order"),
+    path('order-status/', views.order_status, name="order_status"),
+    path('order-details/<str:transaction_id>',
+         views.order_details, name="order_details"),
+    path('cities/<str:q>', views.cities, name="cities"),
+    path('account/', views.account, name="account"),
+    path('account/edit/', views.edit_profile, name="edit_profile"),
+    path('account/change-password/', views.change_password, name="change_password"),
+    path('reset-password/',
+         auth_views.PasswordResetView.as_view(template_name="reset-password.html"), name="reset_password"),
+    path('reset-password-sent/',
+         auth_views.PasswordResetDoneView.as_view(template_name="reset-password-sent.html"), name="password_reset_done"),
+    path('reset/<uidb64>/<token>',
+         auth_views.PasswordResetConfirmView.as_view(template_name="reset-password-form.html"), name="password_reset_confirm"),
+    path('reset-password-complete/',
+         auth_views.PasswordResetCompleteView.as_view(template_name="reset-password-done.html"), name="password_reset_complete"),
+]

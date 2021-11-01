@@ -1,0 +1,185 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="{% static 'shop/css/bootstrap.min.css' %}" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta2/css/all.min.css"
+    integrity="sha512-YWzhKL2whUzgiheMoBFwW8CKV4qpHQAEuvilg9FAn5VJUDwKZZxkJNuGM4XkWuk94WCrrwslk8yWNGmY1EduTA=="
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link rel="stylesheet" href="{% static 'shop/css/index.css' %}" />
+  <link rel="stylesheet" href="{% static 'shop/css/pagination.css' %}" />
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Allison&display=swap');
+
+    a.navbar-brand {
+      font-family: 'Allison', cursive;
+      font-size: 2rem;
+    }
+
+    a.navbar-brand img {
+      width:40px;
+      height: 40px;
+      margin-bottom: 10px;
+    }
+
+    a.navbar-brand:hover img {
+      opacity: 0.75;
+    }
+
+    .total-items {
+      background-color: lightcoral;
+      padding: 0px 7px 2px 6px;
+      border-radius: 50px;
+      margin-right: 10px;
+      color: white;
+      position: relative;
+      right: 5px;
+    }
+
+    .navbar-nav .dropdown-menu {
+      position: fixed;
+      right: 2%;
+    }
+
+    .navbar-nav li:hover>.dropdown-menu {
+      display: block;
+    }
+
+    .dropdown-toggle::after {
+      vertical-align: 0.55em;
+    }
+
+    input#search {
+      margin-right: -1px !important;
+    }
+  </style>
+  {% if user.is_authenticated %}
+  <style>
+    .username {
+      padding-right: 2px !important;
+    }
+  </style>
+  {% endif %}
+  {% block head-extras %}{% endblock %}
+  <title>Ruri's Commerce</title>
+</head>
+
+<body>
+  <header>
+    <nav class="navbar navbar-expand-md navbar-light navbar-main pb-0">
+      <div class="container-fluid shadow-sm pb-2">
+        <a class="navbar-brand ms-5 me-0 " href="{% url 'index' %}" id="img-brand">
+        	<img src="{% static 'shop/images/ruri-commerce-logo.png' %}" alt="">          
+        	Ruri's Commerce
+        </a>
+        <button class="navbar-toggler collapsed" type="button" class="btn btn-primary" data-bs-toggle="collapse"
+          data-bs-target="#navbarCollapse" id="toggle-btn">
+          <span class="my-1 mx-2 close"><i class="fas fa-times"></i></span>
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarCollapse">
+          <form class="d-flex w-100 ms-5 me-5 form-search" action="{% url 'shop' %}" method="GET">
+            <input class="form-control form-control-sm" type="text" placeholder="Search" name="search" id="search">
+            <button class="btn btn-outline-primary btn-sm my-2 my-md-0" type="submit">
+              <span class="material-icons">search</span>
+            </button>
+          </form>
+          <ul class="navbar-nav" id="navbar-collections">
+            {% for cat in categories%}
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'shop' cat.slug %}">{{cat.category_name}}</a>
+            </li>
+            {% endfor %}
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'shop' %}">All</a>
+            </li>
+          </ul>
+        </div>
+
+        <ul class="navbar-nav ms-auto me-5" id="cart-login">
+          <li class="nav-item {% if total_item_in_cart > 0 %} pe-0 {% endif %}">
+            <a class="nav-link" href="{% url 'cart' %}">
+              <span class="material-icons">shopping_cart</span>
+              {% if total_item_in_cart > 0 %}
+              <span class="total-items">{{total_item_in_cart}}</span>
+              {% endif %}
+            </a>
+          </li>
+
+          <div class="vl"></div>
+
+          {% if user.is_authenticated %}
+          <li class="nav-item dropdown username">
+            <a class="nav-link {% if user.is_authenticated %} dropdown-toggle {% endif %} username" href=""
+              id="username">
+              <span class="material-icons">account_circle</span>
+              <span class="align-top">{{user.first_name}}</span>
+            </a>
+            <div class="dropdown-menu" aria-labelledby="username">
+              <a class="dropdown-item" href="{% url 'account' %}">My Account</a>
+              <a class="dropdown-item" href="{% url 'order_status' %}">Order Status</a>
+              <a class="dropdown-item" href="{% url 'logout' %}">Logout</a>
+            </div>
+          </li>
+          {% else %}
+          <li class="nav-item dropdown username">
+            <a class="nav-link username" href="{% url 'login_page' %}">
+              <span class="material-icons">account_circle</span>
+              <span class="align-top">Login</span>
+            </a>
+          </li>
+          {% endif %}
+        </ul>
+      </div>
+    </nav>
+  </header>
+
+  <section>{% block content%} {% endblock %}</section>
+
+  <footer class="bg-primary">
+    <div class="container-fluid pt-3 pb-3">
+      <div class="row mt-3 mb-3">
+        <div class="col-12 d-flex justify-content-end ps-5 pe-5 sc-med">
+          <ul class="list-group list-group-horizontal-sm">
+            <li class="list-group-item">
+              <a href=""><i class="fab fa-facebook"></i></a>
+            </li>
+            <li class="list-group-item">
+              <a href=""><i class="fab fa-twitter"></i></a>
+            </li>
+            <li class="list-group-item">
+              <a href=""><i class="fab fa-instagram"></i></a>
+            </li>
+          </ul>
+        </div>
+        <hr />
+        <div class="col-md-12 d-flex justify-content-between ps-5 pe-5 mt-3">
+          <p style="margin: 0; color: white">&copy 2021 Ruri's Commerce</p>
+          <div class="tos-pp">
+            <a href="">Terms of service</a>
+            <a href="">Privacy Policy</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"
+    integrity="sha384-W8fXfP3gkOKtndU4JGtKDvXbO53Wy8SZCQHczT5FMiiqmQfUpWbYdTil/SxwZgAN"
+    crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.min.js"
+    integrity="sha384-skAcpIdS7UcVUC05LJ9Dxay8AXcDYfBJqt1CJ85S/CFujBsIzCIv+l9liuYLaMQ/"
+    crossorigin="anonymous"></script>
+
+  {% block js-extras %} {% endblock %}
+</body>
+
+</html>

@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block head-extras %}
+{% endblock %}
+{% block content%}
+<div class="navbar navbar-expand-md pt-0 pb-1 navbar-collections">
+  <ul class="navbar-nav ms-auto me-auto">
+    {% for cat in categories %}
+    <li class="nav-item">
+      <a class="nav-link" href="{% url 'shop' cat.slug %}">{{cat.category_name}}</a>
+    </li>
+    {% endfor %}
+    <li class="nav-item">
+      <a class="nav-link" href="{% url 'shop' %}">All Product</a>
+    </li>
+  </ul>
+</div>
+
+<div class="col-12 branding-section">
+  <div class="branding-img ">
+    <img src="{% static 'shop/images/fashion-img2.jpg' %}" alt="" />
+  </div>
+  <div class="branding-caption">
+    <h3>Lorem ipsum</h3>
+    <p>
+      Lorem ipsum dolor sit amet consectetur adipisicing elit. Adipisci
+      architecto illum esse facere quisquam sapiente quis tenetur similique,
+      totam quos, cum corrupti dignissimos animi fuga? Amet, vel hic? Nam, amet?
+    </p>
+    <a class="btn btn-primary" href="{% url 'shop' %}">See Collections</a>
+  </div>
+</div>
+<div class="container-fluid top-collections">
+  <h3 class="text-center pt-5 pb-5">Our Top Collections</h3>
+  <div class="row">
+    {% for tc in top_collections %}
+    <div class="col-md-3 col-sm-6 d-flex justify-content-center">
+      <div class="card mb-3">
+        <a href="{% url 'product' tc.product.slug tc.id %}">
+          <div class="crop">
+            <img src="{{tc.product.image.url}}" class="card-img-top" alt="" />
+          </div>
+        </a>
+        <div class="card-body">
+          <a href="{% url 'product' tc.product.slug tc.id %}">{{tc.product}}</a>
+          <p class="card-text mb-0">
+            <small class="text-muted">{{tc.product.category}}</small>
+          </p>
+          <hr class="mt-2 mb-2" />
+          <p class="card-text mb-0"><strong>${{tc.price}}</strong></p>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

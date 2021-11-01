@@ -1,0 +1,41 @@
+.content-area hr {
+  min-height: calc(30vw + 30vh);
+  margin: 0;
+  width: 1px;
+}
+
+.alert-danger {
+  color: #721c24;
+  background-color: #f8d7da;
+}
+
+.alert-success {
+  color: #155724;
+  background-color: #d4edda;
+}
+
+.alert {
+  padding: 0.5rem 0.75rem;
+}
+
+@media only screen and (max-width: 768px) {
+  .content-area {
+    display: block !important;
+  }
+
+  .login,
+  .account {
+    margin: auto !important;
+    width: 100%;
+  }
+
+  .account {
+    padding-top: 2rem;
+  }
+
+  .content-area hr {
+    margin-top: 40px;
+    min-height: 1px;
+    min-width: calc(30vw + 53vh);
+  }
+}

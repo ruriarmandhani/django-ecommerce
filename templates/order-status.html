@@ -1,0 +1,111 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block head-extras %}
+<style>
+    img {
+        max-width: 100px;
+    }
+
+    .status {
+        color: lightseagreen
+    }
+
+    .category,
+    .order-date {
+        font-size: 0.9rem;
+        color: rgba(0, 0, 0, 0.5)
+    }
+
+    table {
+        width: 100%;
+    }
+</style>
+{% endblock %}
+{% block content %}
+<div class="container">
+    <div class="row" style="min-height:400px;">
+        <ul class="list-group mt-3 mb-3 col-10 ms-auto me-auto">
+            <li class="list-group-item">
+                <h5>Order Status</h5>
+            </li>
+            {% if orders %}
+            {% for order in orders %}
+            <li class="list-group-item pt-0 pb-0 pe-0">
+                <div class="row">
+                    <div class="col-lg-4 pt-3 border-end">
+                        <div>
+                            <a href="{% url 'order_details' order.transaction_id %}" style="text-decoration: none;"
+                                title="Click here to see order details.">
+                                <h5 class="mb-0"><strong>#{{order.transaction_id}}</strong></h5>
+                            </a>
+                            <p class="order-date">Ordered at {{order.ordered_date}}</p>
+                            <p class="mb-1"><strong>Status:</strong></p>
+                            <h5 class="status">{{order.status}}</h5>
+                        </div>
+                    </div>
+                    <div class="col-lg-8 ps-0">
+                        {% for ordered_item in order.order_item.all %}
+                        <div class="row pt-3 pb-3 ms-auto me-auto  
+                            {% if forloop.last == False %} border-bottom {% endif %}">
+                            <div class="col-lg-3 text-center">
+                                <img src="{{ordered_item.item.product.image.url}}" alt="">
+                            </div>
+                            <div class="col-lg-6">
+                                <a href="{% url 'product' ordered_item.item.product.slug ordered_item.item.id %}"
+                                    style="text-decoration: none;">
+                                    <p class="m-0"><strong>{{ordered_item.item.product}}</strong></p>
+                                </a>
+
+                                <p class="mb-2 category">{{ordered_item.item.product.category}}</p>
+                                <p>Size: {{ordered_item.item.size}}</p>
+                            </div>
+                            <div class="col-lg-3">
+                                <p>
+                                    <strong>${{ordered_item.item.price}} x {{ordered_item.quantity}}</strong>
+                                </p>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </li>
+            {% endfor %}
+            {% else %}
+            <li class="list-group-item pt-0 pb-0 pe-0" style="min-height: 400px;">
+                <div class="col text-center mt-5">
+                    <h3>Oops! You have not placed any orders.</h3>
+                    <a href="{% url 'shop' %}">
+                        <button class="btn btn-primary mt-3">Go to shop.</button>
+                    </a>
+                </div>
+            </li>
+            {% endif %}            
+        </ul>
+        {% if orders.has_other_pages %}
+        <ul class="pagination">
+            {% if orders.has_previous %}
+            <li class="page-item"><a class="page-link" href="?page={{ orders.previous_page_number }}">&laquo;</a>
+            </li>
+            {% else %}
+            <li class="page-item disabled"><a class="page-link" href="">&laquo;</a></li>
+            {% endif %}
+            {% for i in orders.paginator.page_range %}
+            {% if orders.number == i %}
+            <li class="page-item active"><a class="page-link" href="#">{{i}}</a></li>
+            {% else %}
+            <li class="page-item"><a class="page-link" href="?page={{ i }}">{{i}}</a></li>
+            {% endif %}
+            {% endfor %}
+            {% if orders.has_next %}
+            <li class="page-item"><a class="page-link" href="?page={{ orders.next_page_number }}">&raquo;</a>
+            </li>
+            {% else%}
+            <li class="page-item disabled"><a class="page-link" href="">&raquo;</a></li>
+            {% endif %}
+        </ul>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+{% block js-extras %}
+{% endblock%}

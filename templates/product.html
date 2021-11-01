@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block head-extras %}
+<link rel="stylesheet" href="{% static 'shop/css/product.css' %}" />
+{% endblock %}
+{% block content %}
+<div class="container-fluid">
+    <div class="row mt-5 mb-5">
+        <div class="col-md-5 text-center ms-auto">
+            <img class="img-item" id='img-item' src="{{item_display.product.image.url}}" alt="" />
+        </div>
+        <div class="col-md-5 me-auto">
+            <h3><strong>{{item_display.product}}</strong></h3>
+            <hr>
+            <h5 class="mb-4" id="price">Price: ${{item_display.price}}</h5>
+            <div class="row">
+                <div class="col-6">
+                    <label class="mb-1" for="size"><strong>Size:</strong></label>
+                    <select class="form-select form-select-sm size" name="size" id="size" onchange="changeStock(this)">
+                        {% for item in items %}
+                        <option value="{{item.id}}">{{item.size}}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-6">
+                    <label class="mb-1" for="qty"><strong>Quantity:</strong></label>
+                    <input type="number" class="form-control qty" id="qty" min="1" max="{{item_display.stock}}"
+                        value="1">
+                </div>
+            </div>
+            <div class="stock">
+                <p id="stock"></p>
+            </div>
+            <div class="mb-4">
+                <p class="my-auto mb-2" id="text-color"><strong>Color:
+                    </strong>{{item_display.product.color.color_name}}</p>
+                <div class="d-flex flex-row item-variant">
+                    {% for item in item_variants %}
+                    {% if item_display.product.slug == item.product.slug %}
+                    <a class="me-2 active item-color" id="{{item.product.color.color_name}}" href="#"><img
+                            src="{{item.product.image.url}}" alt="">
+                    </a>
+                    {% else %}
+                    <a class="me-2 item-color" id="{{item.product.color.color_name}}"
+                        href="{% url 'product' item.product.slug item.id %}">
+                        <img src="{{item.product.image.url}}" alt="">
+                    </a>
+                    {% endif %}
+                    {% endfor%}
+                </div>
+            </div>
+            <div>
+                <button class="btn btn-primary" onclick="addToCart()">Add to
+                    cart</button>
+            </div>
+            <hr>
+            <div class="desc">
+                {% lorem %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block js-extras %}
+<script>
+    const itemId = "{{ item_display.id|safe }}";
+    const stock = "{{ item_display.stock|safe }}";
+    const defaultColor = "<strong>Color: </strong>{{item_display.product.color}}";
+    const defaultImg = "{{item_display.product.image.url|safe}}";
+    const defaultProductURL = "{% url 'product' item_display.product.slug 0 %}";
+    let defaultAddToCartURL = "{% url 'add_cart' item_display.id 0 %}"
+</script>
+<script src="{% static 'shop/js/product.js' %}"></script>
+{% endblock%}

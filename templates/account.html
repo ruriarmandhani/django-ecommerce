@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block head-extras %}
+<style>
+    li.list-group-item a:link {
+        text-decoration: none;
+    }
+
+    input {
+        font-weight: bold;
+    }
+
+    .button-edit {
+        font-size: 0.9rem;
+    }
+</style>
+{% endblock %}
+{% block content %}
+<div class="container">
+    <div class="row mt-3 mb-3">
+        <div class="col-lg-8 mb-3 ms-auto me-auto">
+            <ul class="list-group">
+                <li class="list-group-item">
+                    <h5>My Account</h5>
+                </li>
+                <li class="list-group-item">
+                    <form action="" method="POST">
+                        <div class="row mt-3" style="min-height: 300px;">
+                            <div class="col-lg-8 ms-auto me-auto">
+                                <label for="id_fullname">Name:</label>
+                                <input type="text" class="form-control-plaintext mb-2"
+                                    value="{{user.first_name}} {{user.last_name}}" id="id_fullname" disabled>
+                                <label for="id_email">Email:</label>
+                                <input type="text" class="form-control-plaintext mb-2" id="id_email"
+                                    value="{{user.email}}" disabled>
+                                <label for="id_phone">Phone:</label>
+                                <input type="text" class="form-control-plaintext mb-2" id="id_phone"
+                                    value="{{user.phone}}" disabled>
+                                <label for="id_password">Password:</label>
+                                <input type="password" class="form-control-plaintext mb-2" id="id_password"
+                                    value="password" disabled>
+                            </div>
+                            <div class="col-lg-3">
+                                <ul class="list-group button-edit">
+                                    <li class="list-group-item text-center"><a href="{% url 'edit_profile' %}">Edit
+                                            Profile</a></li>
+                                    <li class="list-group-item text-center"><a href="{% url 'change_password' %}">Change
+                                            Password</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </form>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}
